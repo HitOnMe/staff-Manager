@@ -1,5 +1,5 @@
-function addStaff(index1, index2){
-        document.querySelectorAll('#tableDanhSach tr td')[index2].innerHTML = document.querySelectorAll('input')[index1].value
+function addStaff(index1){
+    return document.querySelectorAll('input')[index1].value
 }
 function totalSalary(){
     var duty = document.querySelector('#chucvu').value,
@@ -17,12 +17,33 @@ function workTime(){
     else if (hour>=160) return 'nhân viên khá';
     else return 'nhân viên trung bình';
 }
+
+var staffCollect =[],
+    table = document.querySelector('#tableDanhSach')
 document.querySelector('#btnCapNhat').onclick = function(){
-    addStaff(1, 0)
-    addStaff(2, 1)
-    addStaff(3, 2)
-    addStaff(5, 3)
-    document.querySelectorAll('#tableDanhSach tr td')[4].innerHTML = document.querySelector('#chucvu').value
-    document.querySelectorAll('#tableDanhSach tr td')[5].innerHTML =totalSalary();
-    document.querySelectorAll('#tableDanhSach tr td')[6].innerHTML = workTime()
+    var staffObject = {'tài khoản': addStaff(1, 0),
+                        'Họ và tên': addStaff(2, 1),
+                        'Email': addStaff(3,2),
+                        'Ngày làm': addStaff(5,3),
+                        'Chức vụ': document.querySelector('#chucvu').value,
+                        'Tổng lương': totalSalary(),
+                        'Xếp loại': workTime()},
+        table = document.querySelector('#tableDanhSach'),
+        mytr = document.createElement('tr');
+        for(var key in staffObject){
+            mytd = document.createElement('td');
+            mytd.textContent=staffObject[key];
+            mytr.appendChild(mytd)
+        }
+    table.appendChild(mytr);
+    staffCollect.push(staffObject);
+}
+document.querySelector('#btnTimNV').onclick = function() {
+    var nameSearch = document.querySelector('#searchName').value,
+        rows=document.querySelectorAll('#tableDanhSach tr');
+    // Hiển thị các hàng tương ứng với kết quả tìm kiếm
+    staffCollect.forEach((staff, index) => {
+        var row = rows[index]
+       row.style.display = (staff['Xếp loại'] !== nameSearch) ? 'none' : '';
+    });
 }
