@@ -19,7 +19,10 @@
 
     <!-- Animate -->
     <!-- <link rel="stylesheet" href="css/animate.css"> -->
-
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
     <!-- My CSS -->
     <link rel="stylesheet" href="css/modal.css" />
 
@@ -150,11 +153,29 @@
                 <div class="col">
                   <div class="input-group">
                     <input
-                      type="text"
                       class="form-control"
-                      placeholder="Loại nhân viên"
                       id="searchName"
+                      placeholder="Họ và tên nhân viên"
                     />
+                    <select class="form-select" id="searchDuty">
+                      <option selected>--Chức vụ--</option>
+                      <option>Sếp</option>
+                      <option>Trưởng phòng</option>
+                      <option>Nhân viên</option>
+                    </select>
+
+                    <select
+                      class="form-select"
+                      id="searchGraduate"
+                      name="graduate"
+                    >
+                      <option selected>--Xếp loại--</option>
+                      <option>Nhân viên xuất sắc</option>
+                      <option>Nhân viên giỏi</option>
+                      <option>Nhân viên khá</option>
+                      <option>Nhân viên trung bình</option>
+                    </select>
+                    <input class="form-control" placeholder="Email đăng ký" />
                     <div class="input-group-prepend">
                       <span class="input-group-text" id="btnTimNV"
                         ><i class="fa fa-search"></i
@@ -178,6 +199,10 @@
                     <th>Tổng lương</th>
                     <th>Xếp loại</th>
                     <th><em class="fa fa-cog"></em></th>
+                    <th class="control__staff">
+                      <button class="fix__staff btn">Sửa</button>
+                      <button class="delete__staff btn">Xóa</button>
+                    </th>
                   </tr>
                 </thead>
                 <tbody id="tableDanhSach"></tbody>
@@ -299,7 +324,7 @@
                     type="text"
                     name="ngaylam"
                     id="datepicker"
-                    class="form-control"
+                    class="form-control input-sm"
                     placeholder="Ngày làm"
                   />
                 </div>
@@ -331,7 +356,7 @@
                       ><i class="fa fa-briefcase"></i
                     ></span>
                   </div>
-                  <select class="form-control" id="chucvu">
+                  <select class="form-control input-sm" id="chucvu">
                     <option>Chọn chức vụ</option>
                     <option>Sếp</option>
                     <option>Trưởng phòng</option>

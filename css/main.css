@@ -1,7 +1,7 @@
 .sp-thongbao {
   color: red;
   margin-left: 2px; 
-  display: none;
+  display: none
 }
 
 #SapXepGiam{
@@ -27,4 +27,24 @@
 }
 .block {
   display: block
+}
+.myTable thead tr{
+  position: relative
+}
+.myTable thead th:last-child{
+  cursor:pointer
+}
+.control__staff {
+  position:absolute;
+  width: 5%;
+  height: 40px;
+  right: 0%;
+  bottom:20%;
+  opacity: 0
+}
+.unlock{
+  opacity: 1
+}
+.fix__staff:hover,.delete__staff:hover{
+  border: 1px solid rgb(201, 198, 198)
 }
