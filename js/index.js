@@ -88,107 +88,265 @@ function checkInput(id1, id2){
         checkBasicsalary: 'Lương cơ bản từ 1 000 000 - 20 000 000 đồng',
         checkDuty: 'Chọn chức vụ của bạn',
         checkHourwork: 'Số giờ làm của bạn trong tháng (8-200 giờ)'
-    };
-    //kiểm tra ô input có nhập đúng yêu cầu không
+    },
+        exist = false;
     userInput.forEach((input, index) => {
         var checkValue = checkInput[index];
-        validateInput(index, input, checkValue, checkObject);
+          validateInput(index, input, checkValue, checkObject);
         input.addEventListener('input', function () {
             validateInput(index, input, checkValue, checkObject);
         });
-        staffCollect.forEach(staff =>{
-            if (staff['tài khoản'] == userInput[0].value){
-                checkInput[0].innerHTML = 'Tài khoản đã có người sủ dụng'
-            }
-            if (staff['Email'] == userInput[2].value){
-                checkInput[2].innerHTML = 'Email đã có người sử dụng'
-            }
-        })
-        checkValid = Array.from(checkInput).filter(checkValue => checkValue.innerHTML !== '').length == 0 ? true : false
-    })
+    });
+    collectStaff.collect.forEach(staff =>{
+        if (staff.account == userInput[0].value){
+            checkInput[0].innerHTML = 'Tài khoản đã có người sủ dụng';
+            exist = true;
+        }
+        if (staff.email == userInput[2].value){
+            checkInput[2].innerHTML = 'Email đã có người sử dụng';
+            exist = true;
+        }});
+        checkValid = Array.from(checkInput).filter(checkValue => checkValue.innerHTML !== '').length == 0 && exist == false ? true : false
     return checkValid
 }
+
 /* Hàm chức năng */
-function addStaff(index){
-    return document.querySelectorAll('input')[index]
+function addStaff(id, index){
+    return document.querySelectorAll(id)[index].value
 }
-function totalSalary(){
-    var duty = document.querySelector('#chucvu').value,
-        basicSalary = Number(document.querySelectorAll('input')[7].value);
+function totalSalary(number){
+    var duty = document.querySelector('#chucvu').value;
+        basicCollect.push(number)
     switch(duty){
-        case 'Nhân viên': return basicSalary*1;
-        case 'Trưởng phòng': return basicSalary*2;
-        case 'Sếp' : return basicSalary*3;
+        case 'Nhân viên': return number*1;
+        case 'Trưởng phòng': return number*2;
+        case 'Sếp' : return number*3;
     }
 }
-function workTime(){
-    var hour =  document.querySelectorAll('input')[8].value;
-    if (hour>=192) return 'Nhân viên xuất sắc';
-    else if (hour>=176) return 'Nhân viên giỏi';
-    else if (hour>=160) return 'Nhân viên khá';
+function workTime(number){
+    workHour.push(number);
+    if (number>=192) return 'Nhân viên xuất sắc';
+    else if (number>=176) return 'Nhân viên giỏi';
+    else if (number>=160) return 'Nhân viên khá';
     else return 'Nhân viên trung bình';
 }
+
+
+// class Dữ liệu nhân viên
+function StaffObject(account, name, email, workDay, duty, totalSalary, rating){
+    this.account = account;
+    this.name = name;
+    this.email = email;
+    this.workDay = workDay;
+    this.duty = duty;
+    this.totalSalary = totalSalary;
+    this.rating = rating;
+    this.deleteStaff = '<i class="fa-solid fa-delete-left"></i>';
+}
+
+
+StaffObject.prototype.updateInput = function(){
+    for(var key in this){
+        var input = document.createElement('input');
+        input.value = key.innerHTML;
+        input.name = key;
+        input.classList.add('btn btn-success');
+        this.appendChild(input) 
+    }
+}
+//object điều kiện lọc
+function Atribute(){
+    this.name = document.querySelectorAll('input')[0].value,
+    this.email = document.querySelectorAll('input')[1].value,
+    this.duty = document.querySelectorAll('select')[0].value,
+    this.rating = document.querySelectorAll('select')[1].value
+}
+//Class danh sách nhân viên
+function listStaff(){
+    this.collect = [];
+}
+listStaff.prototype.addList= function(object){
+    this.collect.push(object)
+}
+
+listStaff.prototype.deleteStaff = function(index){
+    this.collect.splice(index, 1)
+}
+listStaff.prototype.updateStaff = function(index, newObject){
+    this.collect[index] = newObject
+}
 //Hàm trả về vị trí các object thỏa mãn điều kiện lọc
-function filterStaff(objects, targetObject) {//objects: mảng các đối tượng, targetObjects: đối tượng các điều kiện lọc
+listStaff.prototype.findStaff = function(objects, targetObject) {//objects: mảng các đối tượng, targetObjects: đối tượng các điều kiện lọc
     var indexCollect = [],
-        staffs = objects.filter((object) => {return (!targetObject['tài khoản']) &&
-            (targetObject['Họ và tên'] === '' || object['Họ và tên'].includes(targetObject['Họ và tên'])) &&
-               (targetObject['Email'] === '' || object['Email'].includes(targetObject['Email'])) &&
-               (!targetObject['Ngày làm'])&&
-               (targetObject['Chức vụ'] === '--Chức vụ--' || object['Chức vụ'] === targetObject['Chức vụ']) &&
-               (!targetObject['Tổng lương'])&&
-               (targetObject['Xếp loại'] === '--Xếp loại--' || object['Xếp loại'] === targetObject['Xếp loại']);
+        staffs = objects.filter((object) => {return (!targetObject.account) &&
+            (targetObject.name === '' || object.name.includes(targetObject.name)) &&
+            (targetObject.email === '' || object.email.includes(targetObject.email)) &&
+            (!targetObject.workDay)&&
+            (targetObject.duty === '--Chức vụ--' || object.duty === targetObject.duty) &&
+            (!targetObject.totalSalary)&&
+            (targetObject.rating === '--Xếp loại--' || object.rating === targetObject.rating);
     });
+    
     staffs.forEach(staff =>{
         indexCollect.push(objects.indexOf(staff))
     }); return indexCollect
 }
-var staffCollect =[],
-    findObject ={},
-    table = document.querySelector('#tableDanhSach'),
+function staffList(object1, object2){
+    mytr = document.createElement('tr');
+    for(var key in object1){
+        mytd = document.createElement('td');
+        if (key === 'deleteStaff') {
+            mytd.innerHTML = staffObject[key];
+            mytd.style.cursor = 'pointer';
+        } else if (key === 'updateInput') break;
+        else {
+            mytd.textContent = staffObject[key];
+        }
+        mytr.appendChild(mytd)
+    };
+    object2.appendChild(mytr);
+}
+function createCheckbox(form){
+    var input = document.createElement('input');
+    input.name = this;
+    input.for = this.name;
+    input.type = 'checkbox';
+    form.innerHTML = '';
+    form.appendChild(input)
+}
+function createInputText(form){
+    var input = document.createElement('input');
+    input.name = this;
+    input.for = this.name;
+    input.type = 'text';
+    input.value = form.innerHTML;
+    form.innerHTML = '';
+    form.appendChild(input)
+}
+function createSelect(form){
+    form.innerHTML =  '<select><option>Chọn chức vụ</option><option>Sếp</option><option>Trưởng phòng</option><option>Nhân viên</option></select>'
+}
+// Thêm nhân viên vào bảng danh sách nhân viên
+var table = document.querySelector('#tableDanhSach'),
+    objectTr = [],
     rows=[],
-    staffObject={}
+    staffObject={},
+    findObject = {},
+    filterIndex = [],
+    userAction = [],
+    exist = false,
+    basicCollect = [],
+    workHour = [],
+    collectStaff = new listStaff();
 document.querySelector('#btnThemNV').onclick = function(){
     document.querySelectorAll('.sp-thongbao').forEach(comment => {
         comment.style.display = 'block'
     })
+    
     if(checkInput('.input-sm', '.sp-thongbao')){
-            staffObject = {'tài khoản': addStaff(2).value,
-            'Họ và tên': addStaff(3).value,
-            'Email': addStaff(4).value,
-            'Ngày làm': addStaff(6).value,
-            'Chức vụ': document.querySelector('#chucvu').value,
-            'Tổng lương': totalSalary(),
-            'Xếp loại': workTime(),},
-        mytr = document.createElement('tr');
-        for(var key in staffObject){
-            mytd = document.createElement('td');
-            mytd.textContent=staffObject[key];
-            mytr.appendChild(mytd)
-            }
-            table.appendChild(mytr);
-            staffCollect.push(staffObject);
+            if (exist==false){
+                staffObject = new StaffObject(addStaff('input', 2), addStaff('input',3), addStaff('input',4), addStaff('input',6), document.querySelector('#chucvu').value, totalSalary(Number(document.querySelectorAll('input')[7].value)), workTime(Number(document.querySelectorAll('input')[8].value)));
+                collectStaff.addList(staffObject);
+                staffList(staffObject, table);
+            }       
+        }  
     } 
-}
-document.querySelector('.myTable thead th:last-child').onclick=function(){
-    document.querySelector('.control__staff').classList.toggle('unlock')
-}
 //Tìm kiểm nhân viên theo xếp loại
 document.querySelector('#btnTimNV').onclick = function() {
-        findObject = {
-                    'Họ và tên': document.querySelectorAll('input')[0].value,
-                    'Email': document.querySelectorAll('input')[1].value,
-                    'Chức vụ': document.querySelectorAll('select')[0].value,
-                    'Xếp loại': document.querySelectorAll('select')[1].value
-        },  
-        filterIndex = filterStaff(staffCollect, findObject);
+        filterIndex = collectStaff.findStaff(collectStaff.collect, new Atribute());
         rows=document.querySelectorAll('#tableDanhSach tr');
         rows.forEach((row, index) =>{
             row.style.display = filterIndex.includes(index) ? '' : 'none'
+    })
+}
+// Xóa nhân viên
+var cancelContent = '<div class="d-flex"><button class="btn btn-success">Xóa</button><button class="btn btn-danger">Hủy thao tác</button></div>',
+    updateContent =  '<div class="d-flex"><button class="btn btn-success">Chỉnh sửa</button><button class="btn btn-danger">Xóa</button></div>',
+    selectContent = '<div class="d-flex justify-content-end"><button class="btn btn-success">Xóa</button><button class="btn btn-danger">Hủy</button></div>',
+    clickButton = true
+    
+    document.querySelectorAll('#tableDanhSach tr .fa-delete-left').forEach((deleteButton, index) => {
+        deleteButton.onclick = function(){
+            document.querySelectorAll('#tableDanhSach tr')[index].style.display = 'none'; //Bỏ chọn nhân viên
+        }
+    })
+    
+        document.querySelector('#btnDelete').onclick = function(){   
+            var listLength = document.querySelectorAll('#tableDanhSach tr td:last-child').length;
+            if (listLength !== 0){
+            document.querySelectorAll('#tableDanhSach tr td:last-child').forEach((button) => {
+                createCheckbox(button)                           
+            }); 
+            document.querySelector('#ulPhanTrang').innerHTML = selectContent;
+            document.querySelector('.myTable thead th:last-child').innerHTML = "<label>Select All<input type='checkbox' id='select__all' class='form-control'></label>";
+            document.querySelector('#select__all').addEventListener('change', function(){
+                let user__select = document.querySelector('#select__all').checked;
+                document.querySelectorAll('#tableDanhSach tr td:last-child input').forEach(input =>{
+                    input.checked = user__select == true ? true : false // Chọn tất cả nhân viên
+                });
+            });
+            document.querySelector('#ulPhanTrang .btn-danger').onclick = function(){
+                if(document.querySelectorAll('#tableDanhSach tr td:last-child').length !== 0){
+                    document.querySelectorAll('#tableDanhSach tr td:last-child').forEach(td => {
+                        td.innerHTML = ''
+                    });
+                    document.querySelector('.myTable thead th:last-child').innerHTML = '<em class="fa fa-cog"></em>';
+                    document.querySelector('#ulPhanTrang').innerHTML =''
+                }
+                
+            }
+            document.querySelector('#ulPhanTrang .btn-success').onclick = function(){
+                var listObject = document.querySelectorAll('#tableDanhSach tr'),
+                    listcollect =  document.querySelectorAll('#tableDanhSach tr td:last-child input');
+                for (var i=listObject.length-1; i>=0; i--){
+                    if (listcollect[i].checked){
+                        listObject[i].remove();
+                        collectStaff.deleteStaff(i, 1)
+                    }
+                };
+                if (collectStaff.collect.length == 0){
+                    document.querySelector('#ulPhanTrang').textContent = '';
+                    document.querySelector('.myTable thead th:last-child').innerHTML = '<em class="fa fa-cog"></em>'
+            }
+            }
+        }
+    }
+// Cập nhật nhân viên
+
+document.querySelector('#btnCapNhat').onclick = function(){
+    if(document.querySelector('#myModal2').classList.contains('show') == false){
+        document.querySelectorAll('#tableList tr').forEach(tr =>{
+            tr.remove()
         })
-       
+    }
+        collectStaff.collect.forEach((object, index) => {
+            staffList(object, document.querySelector('#tableList'));
+            document.querySelectorAll('#tableList :nth-child(6)')[index].innerHTML = basicCollect[index];
+            document.querySelectorAll('#tableList :nth-child(7)')[index].innerHTML = workHour[index];
+     });
+        document.querySelectorAll('#tableList td').forEach((td, index) =>{
+            index == 4 ? createSelect(td) : createInputText(td);
+        });
+        document.querySelector('#updateStaff').onclick = function(){
+            collectStaff.collect.forEach((staff, index) => {
+                var newStaff = new StaffObject(
+                    addStaff(`#tableList :nth-child(${index + 1}) td input`, 0),
+                    addStaff(`#tableList :nth-child(${index + 1}) td input`, 1),
+                    addStaff(`#tableList :nth-child(${index + 1}) td input`, 2),
+                    addStaff(`#tableList :nth-child(${index + 1}) td input`, 3),
+                    document.querySelectorAll('select')[3].value,
+                    totalSalary(Number(addStaff(`#tableList :nth-child(${index + 1}) td input`, 4))),
+                    workTime(Number(addStaff(`#tableList :nth-child(${index + 1}) td input`, 5)))
+                );
+                collectStaff.collect[index] = newStaff;
+            });
+            staffList(collectStaff.collect, document.querySelector('#tableDanhSach'))
+        }
 }
 
+
+  
+   
 
 
 

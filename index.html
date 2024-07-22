@@ -135,6 +135,17 @@
                   </h3>
                 </div>
                 <div class="col-md-6 text-right">
+                  <button class="btn btn-danger" id="btnDelete">
+                    Xóa nhân viên
+                  </button>
+                  <button
+                    class="btn btn-warning"
+                    id="btnCapNhat"
+                    data-toggle="modal"
+                    data-target="#myModal2"
+                  >
+                    Cập nhật
+                  </button>
                   <button
                     class="btn btn-primary"
                     id="btnThem"
@@ -199,10 +210,6 @@
                     <th>Tổng lương</th>
                     <th>Xếp loại</th>
                     <th><em class="fa fa-cog"></em></th>
-                    <th class="control__staff">
-                      <button class="fix__staff btn">Sửa</button>
-                      <button class="delete__staff btn">Xóa</button>
-                    </th>
                   </tr>
                 </thead>
                 <tbody id="tableDanhSach"></tbody>
@@ -212,7 +219,7 @@
             <!-- Footer -->
             <div class="card-footer myCardFooter">
               <nav>
-                <ul class="pagination justify-content-center" id="ulPhanTrang">
+                <ul class="pagination justify-content-end" id="ulPhanTrang">
                   <li></li>
                 </ul>
               </nav>
@@ -391,11 +398,60 @@
             <button id="btnThemNV" type="button" class="btn btn-success">
               Thêm người dùng
             </button>
-            <button id="btnCapNhat" type="button" class="btn btn-success">
+            <button
+              id="btnDong"
+              type="button"
+              class="btn btn-danger"
+              data-dismiss="modal"
+            >
+              Đóng
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="myModal2">
+      <div class="modal-dialog" style="max-width: 100%">
+        <div class="modal-content">
+          <!-- Modal Header -->
+          <!-- 	<div class="modal-header">
+					<h4 class="modal-title" id="modal-title">Modal Heading</h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div> -->
+
+          <!-- Modal body -->
+          <div class="modal-body">
+            <header><h2>Cập Nhật Nhân Viên</h2></header>
+          </div>
+          <table
+            class="table table-bordered table-hover myTable"
+            id="updateTable"
+          >
+            <thead class="text-primary">
+              <tr>
+                <th class="nowrap">
+                  <span class="mr-1">Tài khoản</span>
+                  <i class="fa fa-arrow-up" id="SapXepTang"></i>
+                  <i class="fa fa-arrow-down" id="SapXepGiam"></i>
+                </th>
+                <th>Họ và tên</th>
+                <th>Email</th>
+                <th>Ngày làm</th>
+                <th>Chức vụ</th>
+                <th>Lương cơ bản</th>
+                <th>Giờ làm</th>
+              </tr>
+            </thead>
+            <tbody id="tableList"></tbody>
+          </table>
+
+          <!-- Modal footer -->
+          <div class="modal-footer" id="modal-footer">
+            <button id="updateStaff" type="button" class="btn btn-success">
               Cập nhật
             </button>
             <button
-              id="btnDong"
+              id="closeBtn"
               type="button"
               class="btn btn-danger"
               data-dismiss="modal"

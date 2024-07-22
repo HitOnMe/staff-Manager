@@ -9,6 +9,16 @@ $( function() {
 
     });
 } );
+$( function() {
+    $( "#datepicker2" ).datepicker({
+        showOn: "button",
+        buttonImage: "img/calendar-icon.png",
+        buttonImageOnly: true,
+        buttonText: "Select date",
+        dateFormat: "mm/dd/yy"
+
+    });
+} );
 
 // Lay ngay mac dinh
 $( document ).ready(function() {
@@ -21,4 +31,5 @@ $( document ).ready(function() {
     ((''+day).length<2 ? '0' : '') + day + '/' +
     d.getFullYear();
     $('#datepicker').val(output);   
+    $('#datepicker2').val(output);   
 });
