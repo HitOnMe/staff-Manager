@@ -114,8 +114,8 @@ function checkInput(id1, id2){
 function addStaff(id, index){
     return document.querySelectorAll(id)[index].value
 }
-function totalSalary(number){
-    var duty = document.querySelector('#chucvu').value;
+function totalSalary(id, index, number){
+    var duty = document.querySelectorAll(id)[index].value;
         basicCollect.push(number)
     switch(duty){
         case 'Nhân viên': return number*1;
@@ -196,11 +196,11 @@ function staffList(object1, object2){
     for(var key in object1){
         mytd = document.createElement('td');
         if (key === 'deleteStaff') {
-            mytd.innerHTML = staffObject[key];
+            mytd.innerHTML = object1[key];
             mytd.style.cursor = 'pointer';
         } else if (key === 'updateInput') break;
         else {
-            mytd.textContent = staffObject[key];
+            mytd.textContent = object1[key];
         }
         mytr.appendChild(mytd)
     };
@@ -244,13 +244,18 @@ document.querySelector('#btnThemNV').onclick = function(){
     })
     
     if(checkInput('.input-sm', '.sp-thongbao')){
-            if (exist==false){
-                staffObject = new StaffObject(addStaff('input', 2), addStaff('input',3), addStaff('input',4), addStaff('input',6), document.querySelector('#chucvu').value, totalSalary(Number(document.querySelectorAll('input')[7].value)), workTime(Number(document.querySelectorAll('input')[8].value)));
-                collectStaff.addList(staffObject);
-                staffList(staffObject, table);
-            }       
-        }  
-    } 
+        if (exist==false){
+            staffObject = new StaffObject(
+                addStaff('input', 2), addStaff('input',3), 
+                addStaff('input',4), addStaff('input',6), 
+                document.querySelector('#chucvu').value, 
+                totalSalary('#chucvu', 0, Number(document.querySelectorAll('input')[7].value)),                                    
+                workTime(Number(document.querySelectorAll('input')[8].value)));
+            collectStaff.addList(staffObject);
+            staffList(staffObject, table);
+        }       
+    }  
+} 
 //Tìm kiểm nhân viên theo xếp loại
 document.querySelector('#btnTimNV').onclick = function() {
         filterIndex = collectStaff.findStaff(collectStaff.collect, new Atribute());
@@ -259,58 +264,59 @@ document.querySelector('#btnTimNV').onclick = function() {
             row.style.display = filterIndex.includes(index) ? '' : 'none'
     })
 }
+document.querySelectorAll('#tableDanhSach tr .fa-delete-left').forEach((deleteButton, index) => {
+    deleteButton.onclick = function(){
+        document.querySelectorAll('#tableDanhSach tr')[index].style.display = 'none'; //Bỏ chọn nhân viên
+    }
+})
 // Xóa nhân viên
 var cancelContent = '<div class="d-flex"><button class="btn btn-success">Xóa</button><button class="btn btn-danger">Hủy thao tác</button></div>',
     updateContent =  '<div class="d-flex"><button class="btn btn-success">Chỉnh sửa</button><button class="btn btn-danger">Xóa</button></div>',
     selectContent = '<div class="d-flex justify-content-end"><button class="btn btn-success">Xóa</button><button class="btn btn-danger">Hủy</button></div>',
-    clickButton = true
+    clickButton = true;
     
-    document.querySelectorAll('#tableDanhSach tr .fa-delete-left').forEach((deleteButton, index) => {
-        deleteButton.onclick = function(){
-            document.querySelectorAll('#tableDanhSach tr')[index].style.display = 'none'; //Bỏ chọn nhân viên
-        }
-    })
-    
-        document.querySelector('#btnDelete').onclick = function(){   
-            var listLength = document.querySelectorAll('#tableDanhSach tr td:last-child').length;
-            if (listLength !== 0){
-            document.querySelectorAll('#tableDanhSach tr td:last-child').forEach((button) => {
-                createCheckbox(button)                           
-            }); 
-            document.querySelector('#ulPhanTrang').innerHTML = selectContent;
-            document.querySelector('.myTable thead th:last-child').innerHTML = "<label>Select All<input type='checkbox' id='select__all' class='form-control'></label>";
-            document.querySelector('#select__all').addEventListener('change', function(){
-                let user__select = document.querySelector('#select__all').checked;
-                document.querySelectorAll('#tableDanhSach tr td:last-child input').forEach(input =>{
-                    input.checked = user__select == true ? true : false // Chọn tất cả nhân viên
-                });
+
+
+document.querySelector('#btnDelete').onclick = function(){   
+    var listLength = document.querySelectorAll('#tableDanhSach tr td:last-child').length;
+    if (listLength !== 0){
+    document.querySelectorAll('#tableDanhSach tr td:last-child').forEach((button) => {
+        createCheckbox(button)                           
+    }); 
+    document.querySelector('#ulPhanTrang').innerHTML = selectContent;
+    document.querySelector('.myTable thead th:last-child').innerHTML = "<label>Select All<input type='checkbox' id='select__all' class='form-control'></label>";
+    document.querySelector('#select__all').addEventListener('change', function(){
+        let user__select = document.querySelector('#select__all').checked;
+        document.querySelectorAll('#tableDanhSach tr td:last-child input').forEach(input =>{
+            input.checked = user__select == true ? true : false // Chọn tất cả nhân viên
+        });
+    });
+    document.querySelector('#ulPhanTrang .btn-danger').onclick = function(){
+        if(document.querySelectorAll('#tableDanhSach tr td:last-child').length !== 0){
+            document.querySelectorAll('#tableDanhSach tr td:last-child').forEach(td => {
+                td.innerHTML = ''
             });
-            document.querySelector('#ulPhanTrang .btn-danger').onclick = function(){
-                if(document.querySelectorAll('#tableDanhSach tr td:last-child').length !== 0){
-                    document.querySelectorAll('#tableDanhSach tr td:last-child').forEach(td => {
-                        td.innerHTML = ''
-                    });
-                    document.querySelector('.myTable thead th:last-child').innerHTML = '<em class="fa fa-cog"></em>';
-                    document.querySelector('#ulPhanTrang').innerHTML =''
-                }
-                
+            document.querySelector('.myTable thead th:last-child').innerHTML = '<em class="fa fa-cog"></em>';
+            document.querySelector('#ulPhanTrang').innerHTML =''
+        }
+        
+    }
+    document.querySelector('#ulPhanTrang .btn-success').onclick = function(){
+        var listObject = document.querySelectorAll('#tableDanhSach tr'),
+            listcollect =  document.querySelectorAll('#tableDanhSach tr td:last-child input');
+        for (var i=listObject.length-1; i>=0; i--){
+            if (listcollect[i].checked){
+                listObject[i].remove();
+                collectStaff.deleteStaff(i, 1)
             }
-            document.querySelector('#ulPhanTrang .btn-success').onclick = function(){
-                var listObject = document.querySelectorAll('#tableDanhSach tr'),
-                    listcollect =  document.querySelectorAll('#tableDanhSach tr td:last-child input');
-                for (var i=listObject.length-1; i>=0; i--){
-                    if (listcollect[i].checked){
-                        listObject[i].remove();
-                        collectStaff.deleteStaff(i, 1)
-                    }
-                };
-                if (collectStaff.collect.length == 0){
-                    document.querySelector('#ulPhanTrang').textContent = '';
-                    document.querySelector('.myTable thead th:last-child').innerHTML = '<em class="fa fa-cog"></em>'
-            }
-            }
+        };
+        if (collectStaff.collect.length == 0){
+            document.querySelector('#ulPhanTrang').textContent = '';
+            document.querySelector('.myTable thead th:last-child').innerHTML = '<em class="fa fa-cog"></em>'
         }
     }
+}}
+
 // Cập nhật nhân viên
 
 document.querySelector('#btnCapNhat').onclick = function(){
@@ -318,33 +324,37 @@ document.querySelector('#btnCapNhat').onclick = function(){
         document.querySelectorAll('#tableList tr').forEach(tr =>{
             tr.remove()
         })
-    }
+    } // Xóa danh sách nhân viên trong bảng cập nhật sau khi đóng
         collectStaff.collect.forEach((object, index) => {
             staffList(object, document.querySelector('#tableList'));
             document.querySelectorAll('#tableList :nth-child(6)')[index].innerHTML = basicCollect[index];
             document.querySelectorAll('#tableList :nth-child(7)')[index].innerHTML = workHour[index];
      });
-        document.querySelectorAll('#tableList td').forEach((td, index) =>{
-            index == 4 ? createSelect(td) : createInputText(td);
+        document.querySelectorAll('#tableList tr').forEach(tr =>{
+            tr.childNodes.forEach((td, index) =>{
+                index == 4 ? createSelect(td) : createInputText(td);
+            })
+           
         });
-        document.querySelector('#updateStaff').onclick = function(){
-            collectStaff.collect.forEach((staff, index) => {
-                var newStaff = new StaffObject(
-                    addStaff(`#tableList :nth-child(${index + 1}) td input`, 0),
-                    addStaff(`#tableList :nth-child(${index + 1}) td input`, 1),
-                    addStaff(`#tableList :nth-child(${index + 1}) td input`, 2),
-                    addStaff(`#tableList :nth-child(${index + 1}) td input`, 3),
-                    document.querySelectorAll('select')[3].value,
-                    totalSalary(Number(addStaff(`#tableList :nth-child(${index + 1}) td input`, 4))),
-                    workTime(Number(addStaff(`#tableList :nth-child(${index + 1}) td input`, 5)))
-                );
-                collectStaff.collect[index] = newStaff;
-            });
-            staffList(collectStaff.collect, document.querySelector('#tableDanhSach'))
-        }
 }
 
-
+document.querySelector('#updateStaff').onclick = function(){
+    collectStaff.collect=[];
+    for (var index = document.querySelectorAll('#tableList select').length-1; index>=0; index-- ){
+        var newStaff = new StaffObject(
+            addStaff(`#tableList :nth-child(${index + 1}) td input`, 0),
+            addStaff(`#tableList :nth-child(${index + 1}) td input`, 1),
+            addStaff(`#tableList :nth-child(${index + 1}) td input`, 2),
+            addStaff(`#tableList :nth-child(${index + 1}) td input`, 3),
+            document.querySelectorAll('#tableList select')[index].value,
+            totalSalary('#tableList select', index , Number(addStaff(`#tableList :nth-child(${index + 1}) td input`, 4))),
+            workTime(Number(addStaff(`#tableList :nth-child(${index + 1}) td input`, 5)))
+        );
+        collectStaff.collect.push(newStaff);
+        document.querySelectorAll('#tableDanhSach tr')[index].remove()
+        staffList(newStaff, document.querySelector('#tableDanhSach'))
+    };
+}
   
    
 
